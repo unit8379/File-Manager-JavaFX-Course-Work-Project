@@ -32,6 +32,7 @@ public class MainController{
         PanelController leftPanelController = (PanelController)leftPanel.getProperties().get("controller");
         PanelController rightPanelController = (PanelController)rightPanel.getProperties().get("controller");
 
+        // выход из метода, если не был выбран файл
         if (leftPanelController.getSelectedFileName() == null && rightPanelController.getSelectedFileName() == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Ни один файл не был выбран.", ButtonType.OK);
             alert.showAndWait();
@@ -69,6 +70,7 @@ public class MainController{
         PanelController leftPanelController = (PanelController)leftPanel.getProperties().get("controller");
         PanelController rightPanelController = (PanelController)rightPanel.getProperties().get("controller");
 
+        // выход из метода, если не был выбран файл
         if (leftPanelController.getSelectedFileName() == null && rightPanelController.getSelectedFileName() == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Ни один файл не был выбран.", ButtonType.OK);
             alert.showAndWait();
@@ -78,11 +80,27 @@ public class MainController{
         // в зависимости от того в какой панели был выбран файл, определятся откуда в какую панель будет перемещаться файл
         PanelController sourcePanelController = null, destinationPanelController = null;
         if (leftPanelController.getSelectedFileName() != null) {
+            // выход из метода, если выбранный файл - директория System
+            Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
+            if (Paths.get(leftPanelController.pathField.getText()).resolve(leftPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Переместить файл System невозможно.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+            // запись в переменные панелей источника и получателя
             sourcePanelController = leftPanelController;
             destinationPanelController = rightPanelController;
         }
 
         if (rightPanelController.getSelectedFileName() != null) {
+            // выход из метода, если выбранный файл - директория System
+            Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
+            if (Paths.get(rightPanelController.pathField.getText()).resolve(rightPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Переместить файл System невозможно.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
+            // запись в переменные панелей источника и получателя
             sourcePanelController = rightPanelController;
             destinationPanelController = leftPanelController;
         }
@@ -107,6 +125,7 @@ public class MainController{
         PanelController leftPanelController = (PanelController)leftPanel.getProperties().get("controller");
         PanelController rightPanelController = (PanelController)rightPanel.getProperties().get("controller");
 
+        // выход из метода, если не был выбран файл
         if (leftPanelController.getSelectedFileName() == null && rightPanelController.getSelectedFileName() == null) {
             Alert alert = new Alert(Alert.AlertType.WARNING, "Ни один файл не был выбран.", ButtonType.OK);
             alert.showAndWait();
@@ -116,10 +135,24 @@ public class MainController{
         // в зависимости от того в какой панели был выбран файл, определятся с какой панелью взаимодействуем
         PanelController panelController = null;
         if (leftPanelController.getSelectedFileName() != null) {
+            // выход из метода, если выбранный файл - директория System
+            Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
+            if (Paths.get(leftPanelController.pathField.getText()).resolve(leftPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить файл System невозможно.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
             panelController = leftPanelController;
         }
 
         if (rightPanelController.getSelectedFileName() != null) {
+            // выход из метода, если выбранный файл - директория System
+            Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
+            if (Paths.get(rightPanelController.pathField.getText()).resolve(rightPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+                Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить файл System невозможно.", ButtonType.OK);
+                alert.showAndWait();
+                return;
+            }
             panelController = rightPanelController;
         }
 
@@ -154,6 +187,10 @@ public class MainController{
                 .exec("java --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src glebi.javafx.popupwindow.PopUpWindow");
     }
 
+    public void itemProcessesLogging(ActionEvent actionEvent) {
+
+    }
+
     public void itemOpenCalculatorAction(ActionEvent actionEvent) throws IOException {
         ProcessBuilder builder = new ProcessBuilder("gnome-calculator");
         Process process = builder.start();
@@ -167,5 +204,12 @@ public class MainController{
     public void itemOpenSystemMonitorAction(ActionEvent actionEvent) throws IOException {
         ProcessBuilder builder = new ProcessBuilder("gnome-system-monitor");
         Process process = builder.start();
+    }
+
+    public void itemAboutProgram(ActionEvent actionEvent) {
+        String aboutMessage = "Операционная система: Ubuntu 18 (ядро Linux).\nЯзык программирования: Java 14.0.1 + JavaFX 14.0.1.\nФИО разработчика:" +
+                " Ежов Глеб Владимирович.\nГруппа: РПИС-82.";
+        Alert alert = new Alert(Alert.AlertType.NONE, aboutMessage, ButtonType.CLOSE);
+        alert.showAndWait();
     }
 }

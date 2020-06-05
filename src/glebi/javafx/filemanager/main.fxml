@@ -18,11 +18,15 @@
         </Menu>
         <Menu text="Доп. функционал">
             <MenuItem text="Всплывающее окно (новый процесс)" onAction="#itemNewProcessAction"/>
+            <MenuItem text="Сохранение протокола запущенных в период работы программы процессов" onAction="#itemProcessesLogging"/>
         </Menu>
         <Menu text="Встроенные утилиты">
             <MenuItem text="Калькулятор" onAction="#itemOpenCalculatorAction"/>
             <MenuItem text="Календарь" onAction="#itemOpenCalendarAction"/>
             <MenuItem text="Системный монитор" onAction="#itemOpenSystemMonitorAction"/>
+        </Menu>
+        <Menu text="Помощь">
+            <MenuItem text="О программе" onAction="#itemAboutProgram"/>
         </Menu>
     </MenuBar>
     <HBox VBox.vgrow="ALWAYS">

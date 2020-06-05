@@ -10,11 +10,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.*;
+import java.nio.file.attribute.PosixFilePermission;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PanelController implements Initializable {
@@ -27,6 +31,7 @@ public class PanelController implements Initializable {
     @FXML
     TextField pathField;
 
+    // Метод, который производит инициализацию таблицы с файлами. Готовит саму таблицу и выполняет предварительные работы.
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // создание столбца таблицы с типом файла. данные из класса FileInfo преобразовывваем в String
@@ -86,7 +91,7 @@ public class PanelController implements Initializable {
         }
         disksBox.getSelectionModel().select(0); // по умолчанию выбираем первую запись в КомбоБоксе
 
-        // вешаем событие на клики по элементам таблици для перехода по директориям
+        // вешаем событие на клики по элементам таблицы для перехода по директориям
         filesTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
@@ -100,8 +105,8 @@ public class PanelController implements Initializable {
             }
         });
 
-        // указание пути для обновления списка файлов
-        updateList(Paths.get("./"));
+        // указание пути для первого обновления списка файлов
+        updateList(Paths.get("./../../"));
     }
 
     public void updateList(Path path) {
@@ -109,7 +114,7 @@ public class PanelController implements Initializable {
             /* normalize() приводит путь к обычному виду, без различных переходов типа точки.
                 toAbsolutePath() показывает весь путь от самого корня "\"
              */
-            pathField.setText(path.normalize().toAbsolutePath().toString()); // заполняем текстовую строку полным путём к файлу
+            pathField.setText(path.toAbsolutePath().normalize().toString()); // заполняем текстовую строку полным путём к файлу
             filesTable.getItems().clear();
             /* собираем информацию о всех файлах по указанному пути, с помощью потока данных (Stream API) все файлы пропускаем
              * через конструктор FileInfo, затем все экземпляры FileInfo собираем в список.
@@ -128,8 +133,12 @@ public class PanelController implements Initializable {
      * @param actionEvent событие
      */
     public void btnPathUpAction(ActionEvent actionEvent) {
-        Path upperPath = Paths.get(pathField.getText()).getParent();
-        if (upperPath != null) {
+        Path upperPath = Paths.get(pathField.getText()).getParent(); // путь родителя текущей директории
+        Path rootPath = Paths.get("./../../../").toAbsolutePath().normalize(); // корень пространства, чтобы не пускать выше
+        if (upperPath.compareTo(rootPath) == 0) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Вы находитесь в корневой директории.", ButtonType.OK);
+            alert.showAndWait();
+        } else if (upperPath != null) {
             updateList(upperPath);
         }
     }
