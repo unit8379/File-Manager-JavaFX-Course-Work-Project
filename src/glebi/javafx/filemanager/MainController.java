@@ -13,15 +13,24 @@ import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import org.jutils.jprocesses.JProcesses;
+import org.jutils.jprocesses.model.ProcessInfo;
 
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class MainController{
     @FXML
@@ -187,8 +196,36 @@ public class MainController{
                 .exec("java --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src glebi.javafx.popupwindow.PopUpWindow");
     }
 
-    public void itemProcessesLogging(ActionEvent actionEvent) {
+    public void itemProcessesLogging(ActionEvent actionEvent) throws Exception {
+        TextInputDialog textInputDialog = new TextInputDialog();
+        textInputDialog.setHeaderText("Введите имя файла, в который будет\nсохранён протокол процессов.\n" +
+                "Файл будет хранится в папке My Documents.");
+        textInputDialog.setContentText("Имя файла:");
+        Optional<String> dialogOutputString = textInputDialog.showAndWait();
+        // Вычленяем из dialogOutputString подстроку с вводом пользователя, потому что изначальная форма: "Optional[output]"
+        String fileName = dialogOutputString.toString().substring(9, dialogOutputString.toString().length() - 1);
 
+        Path processesProtocol = Paths.get("./../../My Documents/" + fileName).toAbsolutePath().normalize();
+        if (!processesProtocol.toFile().exists()) {
+            Files.createFile(processesProtocol);
+            // List получает информацию обо всех процессах. Используется сторонняя библиотека JProcesses
+            List<ProcessInfo> processesList = JProcesses.getProcessList();
+            ProcessInfo thisProcessInfo = JProcesses.getProcess((int)ProcessHandle.current().pid()); // Инфа о процессе ФМ
+            // Открывается поток для записи в файл с помощью FileWriter
+            FileWriter fileWriter = new FileWriter(processesProtocol.toFile());
+            for (final ProcessInfo processInfo : processesList) {
+                if (LocalTime.parse(processInfo.getStartTime()).isAfter(LocalTime.parse(thisProcessInfo.getStartTime()))) {
+                    fileWriter.write("Process Name: " + processInfo.getName() + "\n");
+                    fileWriter.write("Start Time: " + LocalTime.parse(processInfo.getStartTime()) + "\n");
+                    fileWriter.write("------------------" + "\n");
+                }
+            }
+            // Поток закрывается
+            fileWriter.close();
+        } else {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Такой файл уже существует.", ButtonType.OK);
+            alert.showAndWait();
+        }
     }
 
     public void itemOpenCalculatorAction(ActionEvent actionEvent) throws IOException {

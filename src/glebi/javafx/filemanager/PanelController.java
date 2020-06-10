@@ -8,8 +8,10 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -100,6 +102,17 @@ public class PanelController implements Initializable {
                     Path path = Paths.get(pathField.getText()).resolve(getSelectedFileName());
                     if (Files.isDirectory(path)) {
                         updateList(path);
+                    }
+                    else {
+                        // если файл не является директорией, то открыть его с помощью программы по умолчанию
+                        try {
+                            System.out.println(path.toString().replace(" ", "\\ "));
+                            //Process process = Runtime.getRuntime().exec("xdg-open " + path.toString().replace(" ", "\\ "));
+                            //process.waitFor();
+                            //Desktop.getDesktop().open(path.toFile());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }
