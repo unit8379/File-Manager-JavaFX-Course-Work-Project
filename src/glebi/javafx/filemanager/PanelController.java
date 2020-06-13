@@ -93,10 +93,10 @@ public class PanelController implements Initializable {
                     else {
                         // если файл не является директорией, то открыть его с помощью программы по умолчанию
                         try {
-                            String pathForCommandLine = path.toString().replace(" ", "\\ ");
-                            System.out.println(path.toString().replace(" ", "\\ "));
-                            Process process = Runtime.getRuntime().exec("xdg-open " + pathForCommandLine);
-                            process.waitFor();
+                            //String pathForCommandLine = path.toString().replace(" ", "\\ ");
+                            //System.out.println(path.toString().replace(" ", "\\ "));
+                            //Process process = Runtime.getRuntime().exec("xdg-open " + pathForCommandLine);
+                            //process.waitFor();
                             //Desktop.getDesktop().open(path.toFile());
                         } catch (Exception e) {
                             e.printStackTrace();
