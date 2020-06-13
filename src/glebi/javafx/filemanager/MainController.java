@@ -1,36 +1,22 @@
 package glebi.javafx.filemanager;
 
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javafx.util.Callback;
 import org.jutils.jprocesses.JProcesses;
 import org.jutils.jprocesses.model.ProcessInfo;
 
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.net.URL;
+import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainController{
     @FXML
@@ -182,18 +168,25 @@ public class MainController{
     }
 
     public void itemNewProcessAction(ActionEvent actionEvent) throws Exception {
-        /*
-        Parent root = FXMLLoader.load(getClass().getResource("pop_up_window.fxml"));
-        Stage newWindow = new Stage();
-        newWindow.setTitle("New Window");
-        newWindow.setScene(new Scene(root, 600, 400));
-        newWindow.show();
+        // здесь нужно сделать логику и отображение файла в память
+        ProcessInfo thisProcessInfo = JProcesses.getProcess((int)ProcessHandle.current().pid()); // Инфа о процессе ФМ
+        String thisPID = thisProcessInfo.getPid(); // pid ФМ в формате строки
+        String thisStartTime = thisProcessInfo.getStartTime(); // start time файлового менедежера
 
-         */
+        File file = new File("./src/glebi/javafx/popupwindow/mapped_file.txt"); // creating file to write
+        file.delete(); // delete it, because we gonna make random access file on directory of this file
+
+        try (RandomAccessFile randomAccessFile  = new RandomAccessFile(file, "rw")) {
+            FileChannel fileChannel = randomAccessFile.getChannel(); // getting files channel in read/write mode
+            MappedByteBuffer buffer = fileChannel.map(FileChannel.MapMode.READ_WRITE, 0, 32768); // 32kb буфер отображённого на память файла
+            buffer.put((thisPID + "\n").getBytes());
+            buffer.put(thisStartTime.getBytes());
+        }
+
         Process process = Runtime.getRuntime()
-                .exec("javac --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src src//glebi//javafx//popupwindow//PopUpWindow.java");
+                .exec("javac --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src:/home/glebi/Development/jProcesses_1.6.5/jProcesses-1.6.5.jar src//glebi//javafx//popupwindow//PopUpWindow.java");
         process = Runtime.getRuntime()
-                .exec("java --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src glebi.javafx.popupwindow.PopUpWindow");
+                .exec("java --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src:/home/glebi/Development/jProcesses_1.6.5/jProcesses-1.6.5.jar glebi.javafx.popupwindow.PopUpWindow");
     }
 
     public void itemProcessesLogging(ActionEvent actionEvent) throws Exception {
