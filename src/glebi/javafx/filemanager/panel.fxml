@@ -13,7 +13,6 @@
 
 <VBox alignment="center" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="glebi.javafx.filemanager.PanelController">
     <HBox>
-        <ComboBox fx:id="disksBox" onAction="#selectDiskAction"/>
         <TextField fx:id="pathField" editable="false" HBox.hgrow="ALWAYS" />
         <Button text="Вверх" onAction="#btnPathUpAction"/>
     </HBox>

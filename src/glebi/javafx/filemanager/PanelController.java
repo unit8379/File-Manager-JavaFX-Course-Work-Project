@@ -80,13 +80,6 @@ public class PanelController implements Initializable {
         // сразу отсортировать по столбцу с типами файлов
         filesTable.getSortOrder().add(fileTypeColumn);
 
-        // заполняем КомбоБокс корневыми директориями
-        disksBox.getItems().clear();
-        for (Path p : FileSystems.getDefault().getRootDirectories()) {
-            disksBox.getItems().add(p.toString());
-        }
-        disksBox.getSelectionModel().select(0); // по умолчанию выбираем первую запись в КомбоБоксе
-
         // вешаем событие на клики по элементам таблицы для перехода по директориям
         filesTable.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -100,9 +93,10 @@ public class PanelController implements Initializable {
                     else {
                         // если файл не является директорией, то открыть его с помощью программы по умолчанию
                         try {
+                            String pathForCommandLine = path.toString().replace(" ", "\\ ");
                             System.out.println(path.toString().replace(" ", "\\ "));
-                            //Process process = Runtime.getRuntime().exec("xdg-open " + path.toString().replace(" ", "\\ "));
-                            //process.waitFor();
+                            Process process = Runtime.getRuntime().exec("xdg-open " + pathForCommandLine);
+                            process.waitFor();
                             //Desktop.getDesktop().open(path.toFile());
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -148,17 +142,6 @@ public class PanelController implements Initializable {
         } else if (upperPath != null) {
             updateList(upperPath);
         }
-    }
-
-    /**
-     * Событие на выбор элемента КомбоБокса. Если элемент всего один, то он является выбранным
-     * всегда, поэтому на Linux системах, где всего одна корневая директория, этот метод работать не будет.
-     * @param actionEvent
-     */
-    public void selectDiskAction(ActionEvent actionEvent) {
-        ComboBox<String> element = (ComboBox<String>)actionEvent.getSource();
-        // передаём в качестве пути выбранный элемент КомбоБокса.
-        updateList(Paths.get(element.getSelectionModel().getSelectedItem()));
     }
 
     public String getSelectedFileName() {

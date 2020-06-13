@@ -33,11 +33,10 @@
         <fx:include HBox.hgrow="ALWAYS" fx:id="leftPanel" source="panel.fxml"/>
         <fx:include HBox.hgrow="ALWAYS" fx:id="rightPanel" source="panel.fxml"/>
     </HBox>
-    <HBox spacing="5">
+    <HBox spacing="15">
         <Button maxWidth="Infinity" focusTraversable="false" text="Копировать файл" HBox.hgrow="ALWAYS" onAction="#btnCopyAction"/>
         <Button maxWidth="Infinity" focusTraversable="false" text="Переместить файл" HBox.hgrow="ALWAYS" onAction="#btnMoveAction"/>
         <Button maxWidth="Infinity" focusTraversable="false" text="Удалить файл" HBox.hgrow="ALWAYS" onAction="#btnDeleteAction"/>
-        <Button maxWidth="Infinity" focusTraversable="false" text="Выход из программы" HBox.hgrow="ALWAYS" onAction="#btnExitAction"/>
       <padding>
          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
       </padding>

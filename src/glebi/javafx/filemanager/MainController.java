@@ -75,9 +75,9 @@ public class MainController{
         // в зависимости от того в какой панели был выбран файл, определятся откуда в какую панель будет перемещаться файл
         PanelController sourcePanelController = null, destinationPanelController = null;
         if (leftPanelController.getSelectedFileName() != null) {
-            // выход из метода, если выбранный файл - директория System
+            // выход из метода, если выбранный файл из директории System
             Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
-            if (Paths.get(leftPanelController.pathField.getText()).resolve(leftPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+            if (Paths.get(leftPanelController.pathField.getText()).resolve(leftPanelController.getSelectedFileName()).startsWith(systemPath)) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Переместить файл System невозможно.", ButtonType.OK);
                 alert.showAndWait();
                 return;
@@ -88,9 +88,9 @@ public class MainController{
         }
 
         if (rightPanelController.getSelectedFileName() != null) {
-            // выход из метода, если выбранный файл - директория System
+            // выход из метода, если выбранный файл из директории System
             Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
-            if (Paths.get(rightPanelController.pathField.getText()).resolve(rightPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+            if (Paths.get(rightPanelController.pathField.getText()).resolve(rightPanelController.getSelectedFileName()).startsWith(systemPath)) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Переместить файл System невозможно.", ButtonType.OK);
                 alert.showAndWait();
                 return;
@@ -130,9 +130,9 @@ public class MainController{
         // в зависимости от того в какой панели был выбран файл, определятся с какой панелью взаимодействуем
         PanelController panelController = null;
         if (leftPanelController.getSelectedFileName() != null) {
-            // выход из метода, если выбранный файл - директория System
+            // выход из метода, если выбранный файл из директории System
             Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
-            if (Paths.get(leftPanelController.pathField.getText()).resolve(leftPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+            if (Paths.get(leftPanelController.pathField.getText()).resolve(leftPanelController.getSelectedFileName()).startsWith(systemPath)) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить файл System невозможно.", ButtonType.OK);
                 alert.showAndWait();
                 return;
@@ -141,9 +141,9 @@ public class MainController{
         }
 
         if (rightPanelController.getSelectedFileName() != null) {
-            // выход из метода, если выбранный файл - директория System
+            // выход из метода, если выбранный файл из директории System
             Path systemPath = Paths.get("./../").toAbsolutePath().normalize(); // корень директории System
-            if (Paths.get(rightPanelController.pathField.getText()).resolve(rightPanelController.getSelectedFileName()).compareTo(systemPath) == 0) {
+            if (Paths.get(rightPanelController.pathField.getText()).resolve(rightPanelController.getSelectedFileName()).startsWith(systemPath)) {
                 Alert alert = new Alert(Alert.AlertType.WARNING, "Удалить файл System невозможно.", ButtonType.OK);
                 alert.showAndWait();
                 return;
@@ -185,6 +185,7 @@ public class MainController{
 
         Process process = Runtime.getRuntime()
                 .exec("javac --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src:/home/glebi/Development/jProcesses_1.6.5/jProcesses-1.6.5.jar src//glebi//javafx//popupwindow//PopUpWindow.java");
+        process.waitFor();
         process = Runtime.getRuntime()
                 .exec("java --module-path /home/glebi/Development/javafx-sdk-14.0.1/lib --add-modules=javafx.controls,javafx.fxml -cp src:/home/glebi/Development/jProcesses_1.6.5/jProcesses-1.6.5.jar glebi.javafx.popupwindow.PopUpWindow");
     }
